@@ -1,31 +1,39 @@
-﻿
-using System;
-using System.IO;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.Json;
 
 class Program
 {
     static void Main()
     {
-      
         Console.OutputEncoding = Encoding.UTF8;
-
-        string path = "C:\\Users\\o.murha\\source\\repos\\лабораторна 1 (2 семестр)\\лабораторна 1 (2 семестр)\\TextFile1.txt"; 
-
-        List<int> symbolCounts = new List<int>();
-
-        
-        string[] lines = File.ReadAllLines(path);
-
-        foreach (string line in lines)
+        Dictionary<string, object> dictionary = new Dictionary<string, object>
         {
-            symbolCounts.Add(line.Length);
+            { "Fruits", new List<string> { "Яблуко", "Банан", "Апельсин" } },
+            { "Vegetables", new List<string> { "Помідор", "Огірок", "Морква" } },
+            { "Prices", new List<string> { "50 гривень", "75 гривень", "40 гривень" } }
+        };
+
+        int count = 0;
+
+        foreach (var item in dictionary)
+        {
+            if (item.Value is IEnumerable && !(item.Value is string))
+            {
+                count++;
+            }
         }
 
-        for (int i = 0; i < symbolCounts.Count; i++)
+        Console.WriteLine("Кількість записів списком: " + count);
+
+        string json = JsonSerializer.Serialize(dictionary, new JsonSerializerOptions
         {
-            Console.WriteLine($"Рядок {i + 1}: {symbolCounts[i]} символів");
-        }
+            WriteIndented = true
+        });
+
+        File.WriteAllText("products.json", json);
     }
 }
